@@ -1,0 +1,195 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: auto;
+}
+
+/* ── Hero Section ── */
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 120px 24px 80px; /* Существенно увеличили отступ сверху */
+    width: 100%;
+    max-width: 960px;
+}
+
+/* ── Hero Two-Column Layout ── */
+
+.hero-columns {
+    display: flex;
+    align-items: flex-start;
+    gap: 48px;
+    width: 100%;
+}
+
+.hero-left {
+    flex: 1;
+}
+
+.hero-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    opacity: 0;
+    animation: heroRightIn 0.2s ease forwards 0.3s;
+}
+
+@keyframes heroRightIn {
+    to { opacity: 1; }
+}
+
+/* ── Text Elements ── */
+
+.headline {
+    font-size: clamp(22px, 3.2vw, 40px);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.typewriter-cursor {
+    color: #555;
+    animation: cursorBlink 1s step-end infinite;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+}
+
+.subheadline {
+    font-size: clamp(13px, 2vw, 17px);
+    font-weight: 400;
+    color: #666666;
+    line-height: 1.7;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 14px 28px;
+    background-color: #ffffff;
+    color: #0a0a0a;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(11px, 1.4vw, 14px);
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.1s, color 0.1s;
+    align-self: flex-start;
+}
+
+.cta-button:hover {
+    background-color: #e0e0e0;
+}
+
+.micro-copy {
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ── Comparison Table ── */
+
+.comparison {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    width: 100%;
+    padding-top: 24px;
+    margin-bottom: 64px;
+}
+
+.comparison-table {
+    display: flex;
+    width: 100%;
+}
+
+.col-keyboard,
+.col-fnkey {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: clamp(11px, 1.4vw, 13px);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.col-keyboard {
+    padding-right: 32px;
+    border-right: 1px solid #222;
+    color: #444;
+}
+
+.col-fnkey {
+    padding-left: 32px;
+    color: #aaa;
+}
+
+.col-header {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    font-size: clamp(10px, 1.2vw, 12px);
+    text-transform: uppercase;
+}
+
+.col-divider {
+    height: 1px;
+    background-color: #222;
+    margin: 2px 0;
+}
+
+.col-row {
+    line-height: 1.6;
+}
+
+.supporting-copy {
+    font-size: clamp(10px, 1.2vw, 12px);
+    color: #3a3a3a;
+    line-height: 1.8;
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+/* ── Game Canvas ── */
+
+.game-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    overflow: visible;
+    margin-top: 48px;
+}
+
+canvas {
+    background-color: #0a0a0a;
+    display: block;
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    aspect-ratio: 640 / 360;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated; /* Возвращаем четкость пикселей */
+}
