@@ -174,8 +174,10 @@ canvas.addEventListener('mousedown', (e) => {
     }
 });
 
-// Any key hold — mirrors the FN button mechanic
+// Space bar hold — mirrors the FN button mechanic
 document.addEventListener('keydown', (e) => {
+    if (e.code !== 'Space') return;
+    e.preventDefault();
     if (e.repeat) return;
     if (!state.isFNActive) {
         state.isFNActive = true;
@@ -183,7 +185,8 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-document.addEventListener('keyup', () => {
+document.addEventListener('keyup', (e) => {
+    if (e.code !== 'Space') return;
     if (state.isFNActive) {
         state.isFNActive = false;
         state.waveTimer = 1;
@@ -360,12 +363,14 @@ function draw() {
         drawTextPixels('DONE', state.runner.x + 50, state.runner.y + 20, '#fff');
     }
 
-    // "JUST HOLD" label above button
+    // Hint above button
     ctx.fillStyle = '#777';
     ctx.font = '11px "JetBrains Mono", monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('JUST', GAME_WIDTH / 2, button.y - 16);
-    ctx.fillText('HOLD', GAME_WIDTH / 2, button.y - 4);
+    ctx.fillText('JUST HOLD', GAME_WIDTH / 2, button.y - 32);
+    ctx.fillStyle = '#555';
+    ctx.fillText('[ SPACE ]', GAME_WIDTH / 2, button.y - 18);
+    ctx.fillText('or click \u2193', GAME_WIDTH / 2, button.y - 5);
     ctx.textAlign = 'left';
 
     // FN button — keycap style (dark base + light inner square)
