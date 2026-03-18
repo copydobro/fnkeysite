@@ -174,6 +174,22 @@ canvas.addEventListener('mousedown', (e) => {
     }
 });
 
+// Any key hold — mirrors the FN button mechanic
+document.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
+    if (!state.isFNActive) {
+        state.isFNActive = true;
+        state.waveTimer = 1;
+    }
+});
+
+document.addEventListener('keyup', () => {
+    if (state.isFNActive) {
+        state.isFNActive = false;
+        state.waveTimer = 1;
+    }
+});
+
 canvas.addEventListener('mouseup', () => {
     if (state.isFNActive) {
         state.isFNActive = false;
