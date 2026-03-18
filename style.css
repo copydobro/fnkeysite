@@ -23,7 +23,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 0;
-    padding: 120px 24px 80px; /* Существенно увеличили отступ сверху */
+    padding: 240px 24px 80px;
     width: 100%;
     max-width: 960px;
 }
