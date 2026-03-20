@@ -1,34 +1,421 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FnKey</title>
+    <title>FnKey — Real-time Dictation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+    </script>
 </head>
-<body>
-    <section class="hero">
 
+<body>
+    <!-- Boot Sequence Preloader -->
+    <div class="boot-sequence" id="bootSequence">
+        <div class="boot-text" id="bootText"></div>
+    </div>
+    <div class="screen-flash"></div>
+
+    <header class="header">
+        <div class="header-island">
+            <div class="brand-logo">[ FN ]</div>
+            <nav class="header-links">
+                <a href="#how-it-works" class="nav-link">How it works</a>
+                <a href="#specs" class="nav-link">Specs</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+            </nav>
+            <div class="header-status">
+                <span class="status-dot"></span>
+                v0.1.0
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
         <div class="hero-columns">
             <div class="hero-left">
-                <h1 class="headline"><span id="heroTypewriter"></span><span class="typewriter-cursor">_</span></h1>
+                <h1 class="headline"><span id="heroMainTitle"></span><span class="typewriter-cursor">_</span></h1>
             </div>
             <div class="hero-right">
-                <p class="subheadline">40 WPM is the ceiling.<br>Hold Fn and work twice as fast.</p>
-                <a href="#" class="cta-button">Download for macOS</a>
-                <p class="micro-copy">Open source&nbsp;&nbsp;·&nbsp;&nbsp;Free forever&nbsp;&nbsp;·&nbsp;&nbsp;No subscription</p>
+                <div class="hero-data">
+                    <div class="data-row">{</div>
+                    <div class="data-row indent">"<span class="key">typing_speed</span>": "<span class="val">40 wpm</span>",</div>
+                    <div class="data-row indent">"<span class="key">fn_key_boost</span>": "<span class="val">active</span>",</div>
+                    <div class="data-row indent">"<span class="key">turbo_speed</span>": "<span class="val">150 wpm</span>"</div>
+                    <div class="data-row">}</div>
+                </div>
+                <a href="https://github.com/mws/fnkey" class="cta-button spotlight-card">Download .dmg on GitHub</a>
+                <p class="micro-copy">v1.2.0 · macOS 12.0+ · Open Source</p>
             </div>
         </div>
 
-        <div class="game-wrapper">
+        <div class="game-area">
             <canvas id="gameCanvas"></canvas>
         </div>
-
-
     </section>
+
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-header">
+            <span class="reveal-type"><span class="cli-prompt">~ $</span> ./how-it-works.sh</span>
+        </div>
+        <div class="typetester-container">
+            <!-- Левая панель: Клавиатура -->
+            <div class="tt-panel tt-keyboard reveal-up spotlight-card">
+                <div class="tt-panel-header">
+                    <span class="tt-badge">40 wpm</span>
+                    <span class="tt-title">keyboard</span>
+                </div>
+                <div class="tt-content" id="tt-keyboard-text"><span class="tt-cursor">_</span></div>
+            </div>
+
+            <!-- Правая панель: FnKey -->
+            <div class="tt-panel tt-fnkey reveal-up spotlight-card">
+                <div class="tt-panel-header">
+                    <span class="tt-badge active">150 wpm</span>
+                    <span class="tt-title">fnkey</span>
+                </div>
+                <div class="tt-content" id="tt-fnkey-text"><span class="tt-cursor" id="tt-fnkey-cursor">_</span></div>
+                <div class="tt-action-footer">
+                    <div class="tt-fn-button" id="tt-virtual-btn">fn</div>
+                    <div class="tt-status" id="tt-status">waiting...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pillars" id="specs">
+        <div class="section-header">
+            <span class="reveal-type"><span class="cli-prompt">~ $</span> ./why-fnkey.sh</span>
+        </div>
+        <div class="pillars-grid">
+            <div class="pillar-card reveal-up spotlight-card">
+                <div class="pillar-header">
+                    <span class="cli-prompt">~ $</span> cat speed.log
+                </div>
+                <div class="pillar-content">
+                    <p>Not batch recording. Audio streams directly to Deepgram Nova-3 in real time via WebSocket. By the time you release the Fn key, the transcription is already done.</p>
+                </div>
+            </div>
+            
+            <div class="pillar-card reveal-up spotlight-card delay-100">
+                <div class="pillar-header">
+                    <span class="cli-prompt">~ $</span> cat trust.log
+                </div>
+                <div class="pillar-content">
+                    <p>The microphone is dead until you press Fn. The macOS yellow dot is your hardware privacy proof, not a corporate promise. Fully open source (GPL-3.0).</p>
+                </div>
+            </div>
+
+            <div class="pillar-card reveal-up spotlight-card delay-200">
+                <div class="pillar-header">
+                    <span class="cli-prompt">~ $</span> cat freedom.log
+                </div>
+                <div class="pillar-content">
+                    <p>Competitors charge $15/month for slower tools. Keep that $180/year in your pocket. Features Groq fallback API so you're never locked into a single provider.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ CLI Accordion -->
+    <section class="faq-cli" id="faq">
+        <div class="section-header">
+            <span class="reveal-type"><span class="cli-prompt">~ $</span> ./faq.sh</span>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item reveal-up spotlight-card">
+                <div class="faq-question">
+                    <span class="cli-prompt">guest@fnkey:~ $</span> ask "Do I need my own Deepgram API key?"
+                </div>
+                <div class="faq-answer">
+                    <span class="stdout-label">[stdout]:</span>
+                    <span class="faq-answer-content" data-text="No. The app uses our keys by default with Groq as a fallback. It's completely free out of the box."></span>
+                </div>
+            </div>
+            
+            <div class="faq-item reveal-up spotlight-card">
+                <div class="faq-question">
+                    <span class="cli-prompt">guest@fnkey:~ $</span> ask "Is my audio saved anywhere?"
+                </div>
+                <div class="faq-answer">
+                    <span class="stdout-label">[stdout]:</span>
+                    <span class="faq-answer-content" data-text="Never. Audio is streamed directly via WebSocket and is not saved to disk. When the macOS yellow mic indicator is off, the app is 100% deaf."></span>
+                </div>
+            </div>
+
+            <div class="faq-item reveal-up spotlight-card">
+                <div class="faq-question">
+                    <span class="cli-prompt">guest@fnkey:~ $</span> ask "Does it work with any app?"
+                </div>
+                <div class="faq-answer">
+                    <span class="stdout-label">[stdout]:</span>
+                    <span class="faq-answer-content" data-text="Yes. It simulates native keyboard input. If you can type there, you can dictate there (Cursor, Slack, Chrome, etc)."></span>
+                </div>
+            </div>
+            
+            <div class="faq-item reveal-up spotlight-card">
+                <div class="faq-question">
+                    <span class="cli-prompt">guest@fnkey:~ $</span> ask "Why is it free?"
+                </div>
+                <div class="faq-answer">
+                    <span class="stdout-label">[stdout]:</span>
+                    <span class="faq-answer-content" data-text="We built it for ourselves because competitors charge $15/mo for batch audio processing. We believe core utilities should be open source."></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta" id="download">
+        <div class="section-header">
+            <span class="reveal-type"><span class="cli-prompt">~ $</span> ./deploy_fnkey.sh</span>
+        </div>
+        
+        <div class="deploy-block">
+            <div class="install-terminal-card reveal-up spotlight-card" onclick="copyCommand()">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="terminal-title">bash — install</div>
+                    <div class="terminal-copy-hint">click to copy</div>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-command-wrap">
+                        <span class="cli-prompt">~ $</span>
+                        <span id="install-cmd" class="cli-cmd">brew install fnkey</span>
+                    </div>
+                    <div class="copy-status copy-success-overlay">copied to clipboard</div>
+                </div>
+            </div>
+            <div class="deploy-footer">
+                <span class="deploy-subtext">or request <a href="https://fnkey.app/download/fnkey.dmg" class="dmg-link">fnkey.dmg</a> directly</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Neofetch -->
+    <footer class="footer-neofetch">
+        <div class="neofetch-container">
+            <div class="ascii-wrapper reveal-up">
+                <pre class="ascii-logo">
+  ███████╗███╗  ██╗
+  ██╔════╝████╗ ██║
+  █████╗  ██╔██╗██║
+  ██╔══╝  ██║╚████║
+  ██║     ██║ ╚███║
+  ╚═╝     ╚═╝  ╚══╝</pre>
+                <div class="footer-copyright">
+                    © 2025 FnKey · <span class="obsession">Built with obsession by humans</span>
+                </div>
+            </div>
+            <div class="neofetch-info">
+                <div class="info-line reveal-up"><span class="info-key">version</span><span class="info-dots">.....</span> 0.1.0</div>
+                <div class="info-line reveal-up"><span class="info-key">license</span><span class="info-dots">.....</span> GPL-3.0</div>
+                <div class="info-line reveal-up"><span class="info-key">engine</span><span class="info-dots">.....</span> Deepgram Nova-3</div>
+                <div class="info-line reveal-up"><span class="info-key">fallback</span><span class="info-dots">...</span> Groq Whisper</div>
+                <div class="info-line reveal-up"><span class="info-key">os</span><span class="info-dots">.........</span> macOS 12+</div>
+                <div class="info-line reveal-up"><span class="info-key">repo</span><span class="info-dots">.......</span> <a href="https://github.com/mws/fnkey" class="footer-link">github.com/mws/fnkey</a></div>
+            </div>
+        </div>
+    </footer>
+
     <script src="game.js"></script>
+    <script src="typetester.js"></script>
+    <script>
+        // FAQ functionality
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                const answer = item.querySelector('.faq-answer');
+                const content = answer.querySelector('.faq-answer-content');
+                const text = content.getAttribute('data-text');
+
+                // Close all others
+                document.querySelectorAll('.faq-item').forEach(other => {
+                    if (other !== item) {
+                        other.classList.remove('active');
+                        const otherAnswer = other.querySelector('.faq-answer');
+                        if (otherAnswer) otherAnswer.style.maxHeight = '0px';
+                    }
+                });
+
+                if (!isActive) {
+                    item.classList.add('active');
+                    answer.style.maxHeight = '400px'; // Safe height for typewriter
+                    
+                    // Reset and Start Typewriter
+                    content.textContent = '';
+                    let i = 0;
+                    function type() {
+                        if (i < text.length) {
+                            content.textContent += text.charAt(i);
+                            i++;
+                            setTimeout(type, 10);
+                        }
+                    }
+                    type();
+                } else {
+                    item.classList.remove('active');
+                    answer.style.maxHeight = '0px';
+                }
+            });
+        });
+
+        // Copy command functionality
+        function copyCommand() {
+            const cmd = document.getElementById('install-cmd').innerText;
+            navigator.clipboard.writeText(cmd).then(() => {
+                const status = document.querySelector('.copy-status');
+                status.classList.add('visible');
+                setTimeout(() => {
+                    status.classList.remove('visible');
+                }, 2000);
+            });
+        }
+
+        // Boot Sequence Logic
+        document.addEventListener("DOMContentLoaded", () => {
+            const bootText = document.getElementById('bootText');
+            const lines = [
+                '[ OK ] Initializing core systems...',
+                '[ OK ] Mounting memory banks...',
+                '[ OK ] Loading neural engine...',
+                '[ OK ] Establishing secure uplink...',
+                '[ OK ] Booting FnKey v1.0.0...'
+            ];
+
+            let delay = 0;
+            lines.forEach((line) => {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'boot-line';
+                    el.innerHTML = line.replace('[ OK ]', '<span class="status-ok">[ OK ]</span>');
+                    bootText.appendChild(el);
+                }, delay);
+                delay += 80 + Math.random() * 60; // Fast realistic typing
+            });
+
+            // Finish boot and reveal site
+            setTimeout(() => {
+                window.scrollTo(0, 0); // Prevent loading at bottom
+                document.body.classList.add('loaded');
+                if (bootSequence) { // Ensure bootSequence exists before trying to hide it
+                    bootSequence.style.display = 'none';
+                }
+            }, delay + 150); // This timeout ensures the body is loaded and boot sequence is hidden after all lines are typed
+
+            // Init scroll reveals immediately so they trigger once body becomes relative
+            initScrollReveals();
+        });
+
+        // Elements Reveal Dynamics (Custom scroll-check for reliability)
+        function initScrollReveals() {
+            // All besides faq-items, tt-panels and footer elements (they are handled sequentially below)
+            const revealElements = document.querySelectorAll('.reveal-up:not(.faq-item):not(.tt-panel):not(.ascii-wrapper):not(.info-line), .reveal-type');
+            
+            function checkVisible() {
+                const triggerPoint = window.innerHeight * 0.90; // Trigger when 10% inside the viewport
+                revealElements.forEach(el => {
+                    if (el.classList.contains('is-visible')) return;
+                    const rect = el.getBoundingClientRect();
+                    // If element top reaches trigger point or if it is already past it
+                    if (rect.top < triggerPoint && rect.bottom > 0) {
+                        el.classList.add('is-visible');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', checkVisible, { passive: true });
+            window.addEventListener('resize', checkVisible);
+            
+            // Check once on load
+            checkVisible();
+
+            // FAQ — Sequential reveal 
+            const faqList = document.querySelector('.faq-list');
+            if (faqList) {
+                let faqRevealed = false;
+                function checkFaqVisible() {
+                    if (faqRevealed) return;
+                    const rect = faqList.getBoundingClientRect();
+                    if (rect.top < window.innerHeight * 0.85) {
+                        faqRevealed = true;
+                        const faqItems = faqList.querySelectorAll('.faq-item');
+                        faqItems.forEach((item, i) => {
+                            setTimeout(() => item.classList.add('is-visible'), i * 150);
+                        });
+                    }
+                }
+                window.addEventListener('scroll', checkFaqVisible, { passive: true });
+                checkFaqVisible();
+            }
+
+            // Typetester panels — левая, потом правая с задержкой 150ms
+            const typetesterContainer = document.querySelector('.typetester-container');
+            if (typetesterContainer) {
+                let ttRevealed = false;
+
+                function checkTtVisible() {
+                    if (ttRevealed) return;
+                    const rect = typetesterContainer.getBoundingClientRect();
+                    if (rect.top < window.innerHeight * 0.90) {
+                        ttRevealed = true;
+                        const panels = typetesterContainer.querySelectorAll('.tt-panel');
+                        panels.forEach((panel, i) => {
+                            setTimeout(() => panel.classList.add('is-visible'), i * 150);
+                        });
+                    }
+                }
+
+                window.addEventListener('scroll', checkTtVisible, { passive: true });
+                checkTtVisible();
+            }
+
+            // Footer neofetch — ASCII-логотип первым, потом строки одна за другой
+            const neofetchContainer = document.querySelector('.neofetch-container');
+            if (neofetchContainer) {
+                let footerRevealed = false;
+
+                function checkFooterVisible() {
+                    if (footerRevealed) return;
+                    const rect = neofetchContainer.getBoundingClientRect();
+                    if (rect.top < window.innerHeight * 0.95) {
+                        footerRevealed = true;
+                        const asciiWrapper = neofetchContainer.querySelector('.ascii-wrapper');
+                        const infoLines = neofetchContainer.querySelectorAll('.info-line');
+                        if (asciiWrapper) asciiWrapper.classList.add('is-visible');
+                        infoLines.forEach((line, i) => {
+                            setTimeout(() => line.classList.add('is-visible'), 150 + i * 60);
+                        });
+                    }
+                }
+
+                window.addEventListener('scroll', checkFooterVisible, { passive: true });
+                checkFooterVisible();
+            }
+        }
+
+        // Spotlight Effect for Cards
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.spotlight-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
 </body>
+
 </html>

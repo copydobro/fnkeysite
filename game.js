@@ -1,17 +1,14 @@
 // --- Typewriter ---
 
-(function() {
+(function () {
     const text = 'Your keyboard is holding you back.';
-    const el = document.getElementById('heroTypewriter');
+    const el = document.getElementById('heroMainTitle');
     let i = 0;
     function nextDelay(ch, prevCh) {
-        // Pause after punctuation or end of word
-        if (ch === '.' || ch === ',' || ch === '!' || ch === '?') return 280 + Math.random() * 120;
-        if (ch === ' ') return 100 + Math.random() * 80;
-        // Occasional thinking pause (~6% chance)
-        if (Math.random() < 0.06) return 320 + Math.random() * 200;
-        // Base character delay with some variance
-        return 55 + Math.random() * 90;
+        // Turbo speed to match other section headers
+        if (ch === '.' || ch === ',' || ch === '!' || ch === '?') return 120 + Math.random() * 80;
+        if (ch === ' ') return 30 + Math.random() * 30;
+        return 15 + Math.random() * 25;
     }
     function type() {
         if (!el) return;
@@ -21,6 +18,19 @@
             el.textContent += ch;
             i++;
             setTimeout(type, nextDelay(ch, prevCh));
+        } else {
+            // Wait 5s then erase
+            setTimeout(erase, 5000);
+        }
+    }
+    function erase() {
+        if (i > 0) {
+            i--;
+            el.textContent = text.substring(0, i);
+            setTimeout(erase, 15); // Fast erase
+        } else {
+            // Small pause before typing again
+            setTimeout(type, 800);
         }
     }
     if (document.readyState === 'loading') {
@@ -35,14 +45,12 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const GAME_WIDTH = 640;
-const GAME_HEIGHT = 360;
+const GAME_WIDTH = 1280;
+const GAME_HEIGHT = 500;
 
 const DPR = window.devicePixelRatio || 1;
-canvas.width  = GAME_WIDTH  * DPR;
+canvas.width = GAME_WIDTH * DPR;
 canvas.height = GAME_HEIGHT * DPR;
-canvas.style.width  = GAME_WIDTH  + 'px';
-canvas.style.height = GAME_HEIGHT + 'px';
 ctx.scale(DPR, DPR);
 ctx.imageSmoothingEnabled = false;
 
@@ -120,6 +128,7 @@ const sprZ = [
 
 function drawSprite(ctx, sprite, x, y, color, scale) {
     if (!sprite) return;
+    ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = color;
     for (let r = 0; r < sprite.length; r++) {
         for (let c = 0; c < sprite[r].length; c++) {
@@ -133,18 +142,18 @@ function drawSprite(ctx, sprite, x, y, color, scale) {
 // --- Game state ---
 
 const button = {
-    x: GAME_WIDTH / 2 - 32,
-    y: GAME_HEIGHT / 2 - 24,
-    w: 64,
-    h: 48
+    x: GAME_WIDTH / 2 - 64,
+    y: GAME_HEIGHT / 2 - 48,
+    w: 128,
+    h: 96
 };
 
 const state = {
     isFNActive: false,
     lastTime: performance.now(),
     timeAcc: 0,
-    zombie: { x: 40, y: GAME_HEIGHT / 2 - 48, frame: 0 },
-    runner: { x: GAME_WIDTH / 2 + 60, y: GAME_HEIGHT / 2 - 48, frame: 0 },
+    zombie: { x: 80, y: GAME_HEIGHT / 2 - 96, frame: 0 },
+    runner: { x: GAME_WIDTH / 2 + 120, y: GAME_HEIGHT / 2 - 96, frame: 0 },
     particlesZ: [],
     runnerTrail: [],
     waveTimer: 0
@@ -163,7 +172,7 @@ function getCanvasPos(e) {
 
 function isOverButton(x, y) {
     return x >= button.x && x <= button.x + button.w &&
-           y >= button.y && y <= button.y + button.h;
+        y >= button.y && y <= button.y + button.h;
 }
 
 canvas.addEventListener('mousedown', (e) => {
@@ -219,17 +228,17 @@ function update(dt) {
 
     if (!state.isFNActive) {
         // Left world — slow typing
-        state.zombie.x += (dt / 1000) * 16;
+        state.zombie.x += (dt / 1000) * 32;
         state.zombie.frame = Math.floor(state.timeAcc / 400) % 2;
 
-        if (state.zombie.x > button.x - 48) {
-            state.zombie.x = 40;
+        if (state.zombie.x > button.x - 96) {
+            state.zombie.x = 80;
         }
 
         if (Math.random() < 0.02) {
             state.particlesZ.push({
-                x: state.zombie.x - 20,
-                y: state.zombie.y - 20,
+                x: state.zombie.x - 40,
+                y: state.zombie.y - 40,
                 life: 2000,
                 maxLife: 2000
             });
@@ -237,11 +246,11 @@ function update(dt) {
         state.runner.frame = 0;
     } else {
         // Right world — fast dictation
-        state.runner.x += (dt / 1000) * 400;
+        state.runner.x += (dt / 1000) * 800;
         state.runner.frame = Math.floor(state.timeAcc / 50) % 2;
 
-        if (state.runner.x > GAME_WIDTH - 40) {
-            state.runner.x = button.x + button.w + 20;
+        if (state.runner.x > GAME_WIDTH - 80) {
+            state.runner.x = button.x + button.w + 40;
         }
 
         state.runnerTrail.push({
@@ -257,8 +266,8 @@ function update(dt) {
     for (let i = state.particlesZ.length - 1; i >= 0; i--) {
         const p = state.particlesZ[i];
         p.life -= dt;
-        p.y -= (dt / 1000) * 20;
-        p.x -= Math.sin(p.life / 200) * 1.0;
+        p.y -= (dt / 1000) * 40;
+        p.x -= Math.sin(p.life / 200) * 2.0;
         if (p.life <= 0) state.particlesZ.splice(i, 1);
     }
 
@@ -271,22 +280,24 @@ function update(dt) {
 
 // --- Draw ---
 
-function drawTextPixels(txt, x, y, color) {
+function drawTextPixels(txt, x, y, color, size = 28) {
+    ctx.imageSmoothingEnabled = true;
     ctx.fillStyle = color;
-    ctx.font = 'bold 17px "JetBrains Mono", monospace';
+    ctx.font = `bold ${size}px "JetBrains Mono", monospace`;
     ctx.fillText(txt, x, y);
+    ctx.imageSmoothingEnabled = false;
 }
 
 function draw() {
-    // Background
-    ctx.fillStyle = '#0a0a0a';
+    // Background matches page theme
+    ctx.fillStyle = '#0d0c0b';
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
     // Wave ring on state change
     if (state.waveTimer > 0) {
-        const radius = (state.waveTimer / 500) * 300;
+        const radius = (state.waveTimer / 500) * 600;
         ctx.strokeStyle = 'rgba(50, 50, 50, 0.5)';
-        ctx.lineWidth = 20;
+        ctx.lineWidth = 40;
         ctx.beginPath();
         ctx.arc(GAME_WIDTH / 2, GAME_HEIGHT / 2, radius, 0, Math.PI * 2);
         ctx.stroke();
@@ -294,8 +305,8 @@ function draw() {
 
     // Horizon line
     ctx.strokeStyle = '#333';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([8, 8]);
+    ctx.lineWidth = 2;
+    ctx.setLineDash([16, 16]);
     ctx.beginPath();
     ctx.moveTo(0, GAME_HEIGHT / 2);
     ctx.lineTo(GAME_WIDTH, GAME_HEIGHT / 2);
@@ -304,48 +315,39 @@ function draw() {
 
     // WPM labels + comparison text below horizon
     const colorTextL = !state.isFNActive ? '#aaa' : '#333';
-    const colorTextR =  state.isFNActive ? '#aaa' : '#333';
-    const colorRowL  = !state.isFNActive ? '#555' : '#222';
-    const colorRowR  =  state.isFNActive ? '#555' : '#222';
+    const colorTextR = state.isFNActive ? '#aaa' : '#333';
+    const colorRowL = !state.isFNActive ? '#555' : '#222';
+    const colorRowR = state.isFNActive ? '#555' : '#222';
 
     const baseY = GAME_HEIGHT / 2;
-    const lx = 80;
-    const rx = GAME_WIDTH - 220;
+    const lx = 160;
+    const rx = GAME_WIDTH - 440;
 
     // WPM numbers
-    drawTextPixels('40 WPM',  lx, baseY + 46, colorTextL);
-    drawTextPixels('150 WPM', rx, baseY + 46, colorTextR);
+    drawTextPixels('40 wpm', lx, baseY + 70, colorTextL, 28);
+    drawTextPixels('150 wpm', rx, baseY + 70, colorTextR, 28);
 
-    // Headers — same size as WPM (bold 17px)
-    ctx.font = 'bold 17px "JetBrains Mono", monospace';
-    ctx.fillStyle = colorTextL;
-    ctx.textAlign = 'left';
-    ctx.fillText('⌨ KEYBOARD', lx, baseY + 76);
-    ctx.fillStyle = colorTextR;
-    ctx.fillText('🎙 FNKEY', rx, baseY + 76);
+    // Headers — (bold 28px)
+    drawTextPixels('⌨ keyboard', lx, baseY + 115, colorTextL, 28);
+    drawTextPixels('🎙 fnkey', rx, baseY + 115, colorTextR, 28);
 
-    // Rows — same size as previous headers (bold 13px)
-    ctx.font = 'bold 13px "JetBrains Mono", monospace';
+    // Rows — (bold 22px)
     const rows = ['— letter by letter', '— backspace, retype', '— fingers limit you'];
     const rowsR = ['— thought by thought', '— streams as you speak', '— voice sets you free'];
     for (let i = 0; i < 3; i++) {
-        const ry = baseY + 100 + i * 22;
-        ctx.fillStyle = colorRowL;
-        ctx.textAlign = 'left';
-        ctx.fillText(rows[i], lx, ry);
-        ctx.fillStyle = colorRowR;
-        ctx.fillText(rowsR[i], rx, ry);
+        const ry = baseY + 155 + i * 35;
+        drawTextPixels(rows[i], lx, ry, colorRowL, 22);
+        drawTextPixels(rowsR[i], rx, ry, colorRowR, 22);
     }
-    ctx.textAlign = 'left';
 
     const colorL = !state.isFNActive ? '#fff' : '#444';
-    const colorR =  state.isFNActive ? '#fff' : '#444';
+    const colorR = state.isFNActive ? '#fff' : '#444';
 
     // Zombie (left world)
-    drawSprite(ctx, animZombie[state.zombie.frame], state.zombie.x, state.zombie.y, colorL, 4);
+    drawSprite(ctx, animZombie[state.zombie.frame], state.zombie.x, state.zombie.y, colorL, 8);
 
     for (const p of state.particlesZ) {
-        drawSprite(ctx, sprZ, p.x, p.y, colorL, 2);
+        drawSprite(ctx, sprZ, p.x, p.y, colorL, 4);
     }
 
     // Runner (right world)
@@ -353,24 +355,24 @@ function draw() {
         for (const p of state.runnerTrail) {
             const alpha = Math.max(0, p.life / 100);
             ctx.globalAlpha = alpha;
-            drawSprite(ctx, animRunner[p.frame], p.x, p.y, '#666', 4);
+            drawSprite(ctx, animRunner[p.frame], p.x, p.y, '#666', 8);
             ctx.globalAlpha = 1.0;
         }
     }
-    drawSprite(ctx, animRunner[state.runner.frame], state.runner.x, state.runner.y, colorR, 4);
+    drawSprite(ctx, animRunner[state.runner.frame], state.runner.x, state.runner.y, colorR, 8);
 
     if (state.isFNActive) {
-        drawTextPixels('DONE', state.runner.x + 50, state.runner.y + 20, '#fff');
+        drawTextPixels('done', state.runner.x + 100, state.runner.y + 40, '#fff', 22);
     }
 
     // Hint above button
     ctx.fillStyle = '#777';
-    ctx.font = '11px "JetBrains Mono", monospace';
+    ctx.font = '22px "JetBrains Mono", monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('JUST HOLD', GAME_WIDTH / 2, button.y - 32);
+    ctx.fillText('just hold', GAME_WIDTH / 2, button.y - 64);
     ctx.fillStyle = '#555';
-    ctx.fillText('[ SPACE ]', GAME_WIDTH / 2, button.y - 18);
-    ctx.fillText('or click \u2193', GAME_WIDTH / 2, button.y - 5);
+    ctx.fillText('[ space ]', GAME_WIDTH / 2, button.y - 36);
+    ctx.fillText('or click \u2193', GAME_WIDTH / 2, button.y - 10);
     ctx.textAlign = 'left';
 
     // FN button — keycap style (dark base + light inner square)
@@ -384,19 +386,19 @@ function draw() {
     ctx.fillRect(bx, by, bw, bh);
 
     // Light inner square (shifts on press)
-    const innerW = bw - 12;
-    const innerH = bh - 16;
-    const innerX = bx + 6;
-    const innerY = state.isFNActive ? by + 8 : by + 2;
+    const innerW = bw - 24;
+    const innerH = bh - 32;
+    const innerX = bx + 12;
+    const innerY = state.isFNActive ? by + 16 : by + 4;
 
     ctx.fillStyle = '#aaa';
     ctx.fillRect(innerX, innerY, innerW, innerH);
 
     // FN label
     ctx.fillStyle = '#111';
-    ctx.font = 'bold 13px "JetBrains Mono", monospace';
+    ctx.font = 'bold 26px "JetBrains Mono", monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('FN', innerX + innerW / 2, innerY + innerH / 2 + 6);
+    ctx.fillText('fn', innerX + innerW / 2, innerY + innerH / 2 + 12);
     ctx.textAlign = 'left';
 }
 
