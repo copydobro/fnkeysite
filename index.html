@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FnKey — Real-time Dictation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+    </script>
+
+</head>
+
+<body class="loading">
+    <div class="glitch-flash" id="glitchFlash"></div>
+    
+    <!-- Boot Sequence Preloader -->
+    <div class="boot-sequence" id="bootSequence">
+        <div class="boot-text" id="bootText"></div>
+    </div>
+    <div class="screen-flash"></div>
+
+    <header class="header">
+        <div class="header-island">
+            <div class="brand-logo">[ FN ]</div>
+            
+
+
+            <nav class="header-links">
+                <a href="#how-it-works" class="nav-link"><span class="nav-cursor"></span><span data-i18n="nav-works">How it works</span></a>
+                <a href="#specs" class="nav-link"><span class="nav-cursor"></span><span data-i18n="nav-specs">Specs</span></a>
+                <a href="#faq" class="nav-link"><span class="nav-cursor"></span><span data-i18n="nav-faq">FAQ</span></a>
+            </nav>
+            <div class="header-status" style="font-family: 'Press Start 2P', cursive; font-size: 8px;">
+                <span class="status-dot"></span>
+                v0.1.0
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-columns">
+            <div class="hero-left">
+                <h1 class="headline"><span id="heroMainTitle" class="typewriter-header" data-text="Your keyboard is holding you back." data-i18n="hero-title"></span></h1>
+            </div>
+            <div class="hero-right">
+                <div class="hero-data">
+                    <div class="data-row">{</div>
+                    <div class="data-row indent">"<span class="key">typing_speed</span>": "<span class="val">40 wpm</span>",</div>
+                    <div class="data-row indent">"<span class="key">fn_key_boost</span>": "<span class="val">active</span>",</div>
+                    <div class="data-row indent">"<span class="key">turbo_speed</span>": "<span class="val">150 wpm</span>"</div>
+                    <div class="data-row">}</div>
+                </div>
+                <p class="hero-outcome" data-i18n="hero-outcome">Your thoughts at 150 WPM. Free. Forever.</p>
+                <a href="https://github.com/mws/fnkey" class="cta-button spotlight-card" data-i18n="btn-break">Break the ceiling.</a>
+                <p class="micro-copy"><span data-i18n="mc-v">v1.2.0 · macOS 12.0+ · Open Source</span> · <a href="https://github.com/mws/fnkey" class="micro-link">GitHub ↗</a></p>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-header">
+            <span class="typewriter-header" data-text="~ $ ./how-it-works.sh" data-i18n="how_header"></span>
+        </div>
+        <div class="typetester-container">
+            <!-- Левая панель: Клавиатура -->
+            <div class="tt-panel tt-keyboard reveal-up spotlight-card">
+                <div class="tt-panel-header">
+                    <span class="tt-badge" data-i18n="tt-badge-kb">40 wpm</span>
+                    <span class="tt-title" data-i18n="tt-title-kb">keyboard</span>
+                </div>
+                <div class="tt-content" id="tt-keyboard-text"></div>
+                <div class="tt-track">
+                    <div id="sprite-keyboard-container" class="panel-sprite-container"></div>
+                </div>
+            </div>
+
+
+            <!-- Правая панель: FnKey -->
+            <div class="tt-panel tt-fnkey reveal-up spotlight-card">
+                <div class="tt-panel-header">
+                    <span class="tt-badge active" data-i18n="tt-badge-fn">150 wpm</span>
+                    <span class="tt-title" data-i18n="tt-title-fn">fnkey</span>
+                </div>
+                <div class="tt-content" id="tt-fnkey-text"></div>
+                <div class="tt-track">
+                    <div id="sprite-fnkey-container" class="panel-sprite-container"></div>
+                </div>
+                <div class="tt-action-footer">
+
+                    <div class="tt-fn-button" id="tt-virtual-btn">fn</div>
+                    <div class="tt-status" id="tt-status" data-i18n="tt-status">waiting...</div>
+                    <span class="tt-cursor" id="tt-fnkey-cursor">_</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Trophy Room -->
+    <section class="social-proof">
+        <div class="social-proof-strip reveal-up">
+            <!-- Trophy: PH Upvotes -->
+            <div class="sp-trophy trophy-rocket spotlight-card">
+                <div class="sp-icon">
+                    <svg viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M7 2h2v2H7V2zm-1 2h4v2H6V4zm-1 2h6v6H5V6zm1 6h4v2H6v-2zm-3 0h2v2H3v-2zm10 0h2v2h-2v-2z" />
+                    </svg>
+                </div>
+                <div class="sp-info">
+                    <span class="sp-val">107</span>
+                    <span class="sp-label" data-i18n="sp-ph">PH Upvotes</span>
+                </div>
+            </div>
+
+            <!-- Trophy: Product of the Day -->
+            <div class="sp-trophy trophy-cup spotlight-card">
+                <div class="sp-icon">
+                    <svg viewBox="0 0 16 16" fill="#f4c842">
+                        <path d="M3 3h10v5c0 2-2 4-5 4s-5-2-5-4V3zm0 2H1v2h2V5zm12 0h-2v2h2V5zm-8 7h2v2H7v-2zm-2 2h6v1H5v-1z" />
+                    </svg>
+                </div>
+                <div class="sp-info">
+                    <span class="sp-val">#15</span>
+                    <span class="sp-label" data-i18n="sp-pod">Product of Day</span>
+                </div>
+            </div>
+
+            <!-- Trophy: Awesome Mac -->
+            <div class="sp-trophy trophy-star spotlight-card">
+                <div class="sp-icon">
+                    <svg viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 1l2 5h5l-4 3 2 6-5-4-5 4 2-6-4-3h5l2-5z" />
+                    </svg>
+                </div>
+                <div class="sp-info">
+                    <span class="sp-val" data-i18n="sp-listed">Listed</span>
+                    <span class="sp-label" data-i18n="sp-am">awesome-mac</span>
+                </div>
+            </div>
+
+            <!-- Trophy: GitHub Clones -->
+            <div class="sp-trophy trophy-disk spotlight-card">
+                <div class="sp-icon">
+                    <svg viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M2 2h10l2 2v10H2V2zm2 2v4h6V4H4zm7 0h1v3h-1V4zM4 10v4h8v-4H4z" />
+                    </svg>
+                </div>
+                <div class="sp-info">
+                    <span class="sp-val">57</span>
+                    <span class="sp-label" data-i18n="sp-gh">GitHub Cloners</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <section class="pillars" id="specs">
+        <div class="section-header">
+            <span class="typewriter-header" data-text="~ $ ./why-fnkey.sh" data-i18n="specs_header"></span>
+        </div>
+        <div class="pillars-grid">
+            <!-- Speed Pillar -->
+            <div class="pillar-card reveal-up spotlight-card">
+                <div class="pillar-header">
+                    <span class="cli-prompt">~ $</span> <span data-i18n="cat-speed">cat speed.log</span>
+                </div>
+                <div class="pillar-content">
+                    <p data-i18n="p-speed">Not batch recording. Audio streams directly to Deepgram Nova-3 in real time via WebSocket. By the time you release the Fn key, the transcription is already done. 54% lower word error rate on streaming vs batch competitors.</p>
+                </div>
+                <div class="tt-track">
+                    <div id="sprite-pillar-speed" class="panel-sprite-container"></div>
+                </div>
+            </div>
+            
+            <!-- Trust Pillar -->
+            <div class="pillar-card reveal-up spotlight-card delay-100">
+                <div class="pillar-header">
+                    <span class="cli-prompt">~ $</span> <span data-i18n="cat-trust">cat trust.log</span>
+                </div>
+                <div class="pillar-content">
+                    <p data-i18n="p-trust">The microphone is dead until you press Fn. The macOS yellow dot is your hardware privacy proof, not a corporate promise. Fully open source (GPL-3.0).</p>
+                </div>
+                <div class="tt-track">
+                    <div id="sprite-pillar-trust" class="panel-sprite-container"></div>
+                </div>
+            </div>
+
+            <!-- Freedom Pillar -->
+            <div class="pillar-card reveal-up spotlight-card delay-200">
+                <div class="pillar-header">
+                    <span class="cli-prompt">~ $</span> <span data-i18n="cat-freedom">cat freedom.log</span>
+                </div>
+                <div class="pillar-content">
+                    <p data-i18n="p-freedom">Competitors charge $15/month for slower tools. Keep that $180/year in your pocket. Features Groq fallback API so you're never locked into a single provider.</p>
+                </div>
+                <div class="tt-track">
+                    <div id="sprite-pillar-freedom" class="panel-sprite-container"></div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- FAQ CLI Accordion -->
+    <section class="faq-cli" id="faq">
+        <div class="section-header">
+            <span class="typewriter-header" data-text="~ $ ./faq.sh" data-i18n="faq_header"></span>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item reveal-up spotlight-card">
+                <div class="faq-question">
+                    <span class="cli-prompt">guest@fnkey:~ $</span> ask "<span data-i18n="faq-q1">Do I need my own Deepgram API key?</span>"
+                </div>
+                <div class="faq-answer">
+                    <span class="stdout-label">[stdout]:</span>
+                    <span class="faq-answer-content" data-text="Yes, but it takes 30 seconds. Sign up at deepgram.com, grab a free API key, paste it into the app. Deepgram's free tier gives you 45,000 minutes — that's enough for months of heavy use. Groq works as a fallback." data-i18n="faq-a1"></span>
+                </div>
+            </div>
+            
+            <div class="faq-item reveal-up spotlight-card">
+                <div class="faq-question">
+                    <span class="cli-prompt">guest@fnkey:~ $</span> ask "<span data-i18n="faq-q2">Is my audio saved anywhere?</span>"
+                </div>
+                <div class="faq-answer">
+                    <span class="stdout-label">[stdout]:</span>
+                    <span class="faq-answer-content" data-text="Never. Audio is streamed directly via WebSocket and is not saved to disk. When the macOS yellow mic indicator is off, the app is 100% deaf." data-i18n="faq-a2"></span>
+                </div>
+            </div>
+
+            <div class="faq-item reveal-up spotlight-card">
+                <div class="faq-question">
+                    <span class="cli-prompt">guest@fnkey:~ $</span> ask "<span data-i18n="faq-q3">Does it work with any app?</span>"
+                </div>
+                <div class="faq-answer">
+                    <span class="stdout-label">[stdout]:</span>
+                    <span class="faq-answer-content" data-text="Yes. It simulates native keyboard input. If you can type there, you can dictate there (Cursor, Slack, Chrome, etc)." data-i18n="faq-a3"></span>
+                </div>
+            </div>
+            
+            <div class="faq-item reveal-up spotlight-card">
+                <div class="faq-question">
+                    <span class="cli-prompt">guest@fnkey:~ $</span> ask "<span data-i18n="faq-q4">Why is it free?</span>"
+                </div>
+                <div class="faq-answer">
+                    <span class="stdout-label">[stdout]:</span>
+                    <span class="faq-answer-content" data-text="We built it for ourselves because competitors charge $15/mo for batch audio processing. We believe core utilities should be open source. You can't lose. We can't take your money — it doesn't exist. Worst case: brew uninstall fnkey. That's it." data-i18n="faq-a4"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta" id="download">
+        <div class="section-header">
+            <span class="typewriter-header" data-text="~ $ ./deploy_fnkey.sh"></span>
+        </div>
+        
+        <div class="deploy-block">
+            <div class="install-terminal-card reveal-up spotlight-card" onclick="copyCommand()">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="terminal-title" data-i18n="term-install">bash — install</div>
+                    <div class="terminal-copy-hint" data-i18n="copy-hint">click to copy</div>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-command-wrap">
+                        <span class="cli-prompt">~ $</span>
+                        <span id="install-cmd" class="cli-cmd">brew install fnkey</span>
+                    </div>
+                    <div class="copy-status copy-success-overlay" data-i18n="copy-status">copied to clipboard</div>
+                </div>
+            </div>
+            <div class="deploy-footer">
+                <span class="deploy-subtext"><span data-i18n="deploy-sub">or request</span> <a href="https://fnkey.app/download/fnkey.dmg" class="dmg-link">fnkey.dmg</a> <span data-i18n="deploy-dir" style="display:none">directly</span></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Neofetch -->
+    <footer class="footer-neofetch">
+        <div class="neofetch-container">
+            <div class="ascii-wrapper reveal-up">
+                <pre class="ascii-logo">
+  ███████╗███╗  ██╗
+  ██╔════╝████╗ ██║
+  █████╗  ██╔██╗██║
+  ██╔══╝  ██║╚████║
+  ██║     ██║ ╚███║
+  ╚═╝     ╚═╝  ╚══╝</pre>
+                <div class="footer-copyright">
+                    © 2025 FnKey · <span class="obsession" data-i18n="footer-obs">Built with obsession by humans</span>
+                </div>
+            </div>
+            <div class="neofetch-info">
+                <div class="info-line reveal-up"><span class="info-key" data-i18n="version">version</span><span class="info-dots">.....</span> 0.1.0</div>
+                <div class="info-line reveal-up"><span class="info-key" data-i18n="license">license</span><span class="info-dots">.....</span> GPL-3.0</div>
+                <div class="info-line reveal-up"><span class="info-key" data-i18n="engine">engine</span><span class="info-dots">.....</span> Deepgram Nova-3</div>
+                <div class="info-line reveal-up"><span class="info-key" data-i18n="fallback">fallback</span><span class="info-dots">...</span> Groq Whisper</div>
+                <div class="info-line reveal-up"><span class="info-key">os</span><span class="info-dots">.........</span> macOS 12+</div>
+                <div class="info-line reveal-up"><span class="info-key" data-i18n="repo">repo</span><span class="info-dots">.......</span> <a href="https://github.com/mws/fnkey" class="footer-link">github.com/mws/fnkey</a></div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Kernel Panic Prank Overlay -->
+    <div id="kernel-panic" class="kernel-panic-overlay">
+        <div class="panic-content">
+            <div class="panic-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                    <line x1="12" y1="2" x2="12" y2="12"></line>
+                </svg>
+            </div>
+            <div class="panic-text-block">
+                <p class="panic-lang lang-en" data-i18n="panic">Scared? We were just joking, your command is in the clipboard. Good luck!</p>
+                <p class="panic-lang lang-fr">Peur? Nous plaisantions simplement, votre commande est dans le presse-papiers. Bonne chance !</p>
+                <p class="panic-lang lang-de">Angst? Wir haben nur gescherzt, dein Befehl befindet sich in der Zwischenablage. Viel Glück!</p>
+                <p class="panic-lang lang-es">¿Asustado? Solo bromeábamos, tu comando está en el portapapeles. ¡Buena suerte!</p>
+                <p class="panic-lang lang-jp">怖かったですか？ 冗談ですよ。コマンドはクリップボードにあります。頑張ってください！</p>
+            </div>
+            <div class="panic-reboot">
+                [ REBOOTING IN <span id="panic-timer">7</span> SECONDS ]
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Interactive Cursor -->
+    <div class="custom-cursor"></div>
+    <div class="custom-cursor-follower"></div>
+
+    <!-- Victory Animation Container -->
+    <div id="victory-overlay"></div>
+
+    <script src="lang.js"></script>
+    <script src="sprites.js"></script>
+    <script src="trophies.js"></script>
+    <script src="game.js"></script>
+    <script src="victory_fx.js"></script>
+    <script src="typetester.js"></script>
+
+    <script>
+        // FAQ functionality
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                const answer = item.querySelector('.faq-answer');
+                const content = answer.querySelector('.faq-answer-content');
+                const text = content.getAttribute('data-text');
+
+                // Close all others
+                document.querySelectorAll('.faq-item').forEach(other => {
+                    if (other !== item) {
+                        other.classList.remove('active');
+                        const otherAnswer = other.querySelector('.faq-answer');
+                        if (otherAnswer) otherAnswer.style.maxHeight = '0px';
+                    }
+                });
+
+                if (!isActive) {
+                    item.classList.add('active');
+                    answer.style.maxHeight = '400px'; // Safe height for typewriter
+                    
+                    // Reset and Start Typewriter
+                    content.textContent = '';
+                    let i = 0;
+                    function type() {
+                        if (i < text.length) {
+                            content.textContent += text.charAt(i);
+                            i++;
+                            setTimeout(type, 10);
+                        }
+                    }
+                    type();
+                } else {
+                    item.classList.remove('active');
+                    answer.style.maxHeight = '0px';
+                }
+            });
+        });
+
+        // Copy command functionality with PRANK
+        function copyCommand() {
+            // 0. Instantly eliminate all site content to prevent flickers
+            document.body.classList.add('prank-mode');
+
+            const cmd = document.getElementById('install-cmd').innerText;
+            navigator.clipboard.writeText(cmd).then(() => {
+                // Trigger sudden white flash for shock effect
+                const flash = document.getElementById('glitchFlash');
+                if (flash) {
+                    flash.classList.remove('active');
+                    void flash.offsetWidth; // Trigger reflow
+                    flash.classList.add('active');
+                }
+
+                // 1. Show standard toast for a split second so they know it copied
+                const status = document.querySelector('.copy-status');
+                status.classList.add('visible');
+                
+                // 2. TRIGGER KERNEL PANIC after 300ms
+                setTimeout(() => {
+                    const panic = document.getElementById('kernel-panic');
+                    const timerEl = document.getElementById('panic-timer');
+                    let seconds = 7;
+                    
+                    panic.classList.add('active');
+                    status.classList.remove('visible');
+                    
+                    const countdown = setInterval(() => {
+                        seconds--;
+                        timerEl.innerText = seconds;
+                        if (seconds <= 0) {
+                            clearInterval(countdown);
+                            
+                            // 3. REBOOT - Clear prank mode and refresh page
+                            document.body.classList.remove('prank-mode');
+                            panic.classList.remove('active');
+                            
+                            // Actual reload for a fresh start
+                            location.reload();
+                        }
+                    }, 1000);
+                }, 300);
+            });
+        }
+
+        // Boot Sequence Logic
+        document.addEventListener("DOMContentLoaded", () => {
+            const bootText = document.getElementById('bootText');
+            const lang = window.currentLang || 'en';
+            const t = translations && translations[lang] ? translations[lang] : translations['en'];
+
+            const lines = [
+                t['boot-1'] || '[ OK ] Initializing core systems...',
+                t['boot-2'] || '[ OK ] Mounting memory banks...',
+                t['boot-3'] || '[ OK ] Loading neural engine...',
+                t['boot-4'] || '[ OK ] Establishing secure uplink...',
+                t['boot-5'] || '[ OK ] Booting FnKey v1.0.0...'
+            ];
+
+            let delay = 0;
+            lines.forEach((line) => {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'boot-line';
+                    el.innerHTML = line.replace('[ OK ]', '<span class="status-ok">[ OK ]</span>');
+                    bootText.appendChild(el);
+                }, delay);
+                delay += 80 + Math.random() * 60; // Fast realistic typing
+            });
+
+            // Finish boot and reveal site
+            setTimeout(() => {
+                window.scrollTo(0, 0); // Prevent loading at bottom
+                document.body.classList.add('loaded');
+                if (bootSequence) { // Ensure bootSequence exists before trying to hide it
+                    bootSequence.style.display = 'none';
+                }
+            }, delay + 150); // This timeout ensures the body is loaded and boot sequence is hidden after all lines are typed
+
+            // Init scroll reveals immediately so they trigger once body becomes relative
+            initScrollReveals();
+        });
+
+        // Elements Reveal Dynamics (Custom scroll-check for reliability)
+        function initScrollReveals() {
+            // All besides faq-items, tt-panels and footer elements (they are handled sequentially below)
+            const revealElements = document.querySelectorAll('.reveal-up:not(.faq-item):not(.tt-panel):not(.ascii-wrapper):not(.info-line), .reveal-type');
+            
+            function checkVisible() {
+                const triggerPoint = window.innerHeight * 0.90; // Trigger when 10% inside the viewport
+                revealElements.forEach(el => {
+                    if (el.classList.contains('is-visible')) return;
+                    const rect = el.getBoundingClientRect();
+                    // If element top reaches trigger point or if it is already past it
+                    if (rect.top < triggerPoint && rect.bottom > 0) {
+                        el.classList.add('is-visible');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', checkVisible, { passive: true });
+            window.addEventListener('resize', checkVisible);
+            
+            // Check once on load
+            checkVisible();
+
+            // FAQ — Sequential reveal 
+            const faqList = document.querySelector('.faq-list');
+            if (faqList) {
+                let faqRevealed = false;
+                function checkFaqVisible() {
+                    if (faqRevealed) return;
+                    const rect = faqList.getBoundingClientRect();
+                    if (rect.top < window.innerHeight * 0.85) {
+                        faqRevealed = true;
+                        const faqItems = faqList.querySelectorAll('.faq-item');
+                        faqItems.forEach((item, i) => {
+                            setTimeout(() => item.classList.add('is-visible'), i * 150);
+                        });
+                    }
+                }
+                window.addEventListener('scroll', checkFaqVisible, { passive: true });
+                checkFaqVisible();
+            }
+
+            // Typetester panels — левая, потом правая с задержкой 150ms
+            const typetesterContainer = document.querySelector('.typetester-container');
+            if (typetesterContainer) {
+                let ttRevealed = false;
+
+                function checkTtVisible() {
+                    if (ttRevealed) return;
+                    const rect = typetesterContainer.getBoundingClientRect();
+                    if (rect.top < window.innerHeight * 0.90) {
+                        ttRevealed = true;
+                        const panels = typetesterContainer.querySelectorAll('.tt-panel');
+                        panels.forEach((panel, i) => {
+                            setTimeout(() => panel.classList.add('is-visible'), i * 150);
+                        });
+                    }
+                }
+
+                window.addEventListener('scroll', checkTtVisible, { passive: true });
+                checkTtVisible();
+            }
+
+            // Footer neofetch — ASCII-логотип первым, потом строки одна за другой
+            const neofetchContainer = document.querySelector('.neofetch-container');
+            if (neofetchContainer) {
+                let footerRevealed = false;
+
+                function checkFooterVisible() {
+                    if (footerRevealed) return;
+                    const rect = neofetchContainer.getBoundingClientRect();
+                    if (rect.top < window.innerHeight * 0.95) {
+                        footerRevealed = true;
+                        const asciiWrapper = neofetchContainer.querySelector('.ascii-wrapper');
+                        const infoLines = neofetchContainer.querySelectorAll('.info-line');
+                        if (asciiWrapper) asciiWrapper.classList.add('is-visible');
+                        infoLines.forEach((line, i) => {
+                            setTimeout(() => line.classList.add('is-visible'), 150 + i * 60);
+                        });
+                    }
+                }
+
+                window.addEventListener('scroll', checkFooterVisible, { passive: true });
+                checkFooterVisible();
+            }
+        }
+
+        // Spotlight Effect & Custom Cursor
+        const cursor = document.querySelector('.custom-cursor');
+        const follower = document.querySelector('.custom-cursor-follower');
+        let mouseX = 0, mouseY = 0;
+        let followerX = 0, followerY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            // Reveal cursor on first move
+            if (cursor && !cursor.classList.contains('is-visible')) {
+                cursor.classList.add('is-visible');
+                if (follower) follower.classList.add('is-visible');
+                // Sync follower position immediately to avoid jump
+                followerX = mouseX;
+                followerY = mouseY;
+            }
+
+            // Immediate cursor update
+            if (cursor) {
+                cursor.style.left = `${mouseX}px`;
+                cursor.style.top = `${mouseY}px`;
+            }
+
+            // Spotlight card physics
+            const cards = document.querySelectorAll('.spotlight-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // Smooth follower animation loop
+        function moveFollower() {
+            // Lerp (Linear Interpolation) for smooth lag effect
+            followerX += (mouseX - followerX) * 0.15;
+            followerY += (mouseY - followerY) * 0.15;
+
+            if (follower) {
+                follower.style.left = `${followerX}px`;
+                follower.style.top = `${followerY}px`;
+            }
+            requestAnimationFrame(moveFollower);
+        }
+        moveFollower();
+
+        // Cursor Interaction (Hover States)
+        function initCursorHovers() {
+            const interactives = document.querySelectorAll('a, button, .spotlight-card, [onclick], .faq-item');
+            interactives.forEach(el => {
+                el.addEventListener('mouseenter', () => follower.classList.add('hover'));
+                el.addEventListener('mouseleave', () => follower.classList.remove('hover'));
+            });
+        }
+        
+        // Run after elements are likely rendered
+        setTimeout(initCursorHovers, 500);
+    </script>
+</body>
+
+</html>
